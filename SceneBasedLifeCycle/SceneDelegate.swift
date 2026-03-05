@@ -11,13 +11,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
 
-
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         print("sceneWillConnectTo")
         guard let scene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: scene)
-        let vc = SettingsViewController()
-        window.rootViewController = vc
+        let vc = LoginViewController()
+        let nav = UINavigationController(rootViewController: vc)
+        window.rootViewController = nav
         self.window = window
         window.makeKeyAndVisible()
     }
@@ -54,7 +54,21 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use this method to save data, release shared resources, and store enough scene-specific state information
         // to restore the scene back to its current state.
     }
-
-
+    
+    func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
+        guard userActivity.activityType == NSUserActivityTypeBrowsingWeb,
+              let url = userActivity.webpageURL else {
+            print("continue userActivity (non-web):", userActivity.activityType)
+            return
+        }
+        print("🔗 UL (continue):", url.absoluteString)
+    }
+    
+    // ✅ カスタムURLスキームで呼ばれる（myapp:// など）
+    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        guard let url = URLContexts.first?.url else { return }
+        print("📨 openURL:", url.absoluteString)
+        let scene = scene.activationState.rawValue
+        print(scene)
+    }
 }
-
